@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b1020">
+  <title>GPT-2 Story Studio</title>
+  <meta name="description" content="Generate interactive stories with GPT-2, writing styles, temperature controls, and side-by-side comparisons.">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <main class="shell">
+    <header class="hero">
+      <div class="eyebrow">LOCAL AI · STORY LAB</div>
+      <h1>GPT-2 <span>Story Studio</span></h1>
+      <p>One opening sentence. Endless possible stories. Tune the model and compare how it writes.</p>
+      <div class="status-line"><span id="statusDot" class="dot"></span><span id="modelStatus" aria-live="polite">Model not loaded — load it when you're ready.</span></div>
+    </header>
+
+    <section class="layout">
+      <section class="card controls">
+        <div class="section-heading"><div><span class="step">01</span><h2>Build your story</h2></div></div>
+        <label for="opening">Opening sentence</label>
+        <textarea id="opening" rows="4" maxlength="1200" placeholder="At midnight, the old lighthouse began to shine again.">At midnight, the old lighthouse began to shine again.</textarea>
+        <div class="field-row">
+          <div class="field">
+            <label for="style">Writing style</label>
+            <select id="style">
+              <option value="Adventure">Adventure</option>
+              <option value="Mystery">Mystery</option>
+              <option value="Fantasy">Fantasy</option>
+              <option value="Science fiction">Science fiction</option>
+              <option value="Horror">Horror</option>
+              <option value="Romance">Romance</option>
+              <option value="Comedy">Comedy</option>
+              <option value="General">General</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="temperature">Temperature <strong id="tempValue">0.8</strong></label>
+            <input id="temperature" type="range" min="0.2" max="1.5" step="0.1" value="0.8">
+            <div class="range-labels"><span>Predictable</span><span>Creative</span></div>
+          </div>
+        </div>
+        <div class="field-row three">
+          <div class="field">
+            <label for="length">New tokens</label>
+            <select id="length">
+              <option value="50">Short · 50</option>
+              <option value="100" selected>Medium · 100</option>
+              <option value="150">Long · 150</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="topK">Top-k sampling</label>
+            <select id="topK">
+              <option value="0">Off</option>
+              <option value="20">20</option>
+              <option value="40" selected>40</option>
+              <option value="80">80</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="seed">Random seed</label>
+            <input id="seed" type="number" min="0" max="999999" value="42">
+          </div>
+        </div>
+        <div class="actions">
+          <button id="loadBtn" class="button secondary">Load GPT-2 model</button>
+          <button id="generateBtn" class="button primary" disabled>✦ Generate story</button>
+        </div>
+        <p class="hint">First load downloads the model files to your browser. After that, the browser runs generation locally using those downloaded weights. Keep this tab open during generation.</p>
+      </section>
+
+      <aside class="card explainer">
+        <span class="step">GUIDE</span>
+        <h2>What changes?</h2>
+        <div class="explain-item"><span class="explain-icon">↘</span><div><h3>Lower temperature</h3><p>Usually more predictable wording and safer next-token choices.</p></div></div>
+        <div class="explain-item"><span class="explain-icon">✧</span><div><h3>Higher temperature</h3><p>Usually more varied wording, but sometimes less coherent.</p></div></div>
+        <div class="explain-item"><span class="explain-icon">⟳</span><div><h3>Autoregressive generation</h3><p>GPT-2 predicts the next token repeatedly, using earlier tokens as context.</p></div></div>
+        <div class="model-note"><strong>Model:</strong> GPT-2 · <strong>Runtime:</strong> browser-side inference · <strong>API:</strong> no hosted text-generation API</div>
+      </aside>
+    </section>
+
+    <section class="card output-card">
+      <div class="output-head"><div><span class="step">02</span><h2>Generated story</h2></div><button id="downloadBtn" class="button quiet" disabled>Download .txt</button></div>
+      <div id="storyOutput" class="story empty" aria-live="polite">Your generated story will appear here.</div>
+      <div class="metrics">
+        <div class="metric"><span>Story tokens</span><strong id="storyTokens">—</strong></div>
+        <div class="metric"><span>Output tokens</span><strong id="outputTokens">—</strong></div>
+        <div class="metric"><span>Temperature</span><strong id="usedTemp">—</strong></div>
+      </div>
+    </section>
+
+    <section class="card compare-card">
+      <div class="section-heading"><div><span class="step">03</span><h2>Compare temperatures</h2></div><p>Use the same opening and style to compare sampling behaviour.</p></div>
+      <div class="field-row compare-controls">
+        <div class="field"><label for="tempA">Version A temperature <strong id="tempAValue">0.4</strong></label><input id="tempA" type="range" min="0.2" max="1.5" step="0.1" value="0.4"></div>
+        <div class="field"><label for="tempB">Version B temperature <strong id="tempBValue">1.2</strong></label><input id="tempB" type="range" min="0.2" max="1.5" step="0.1" value="1.2"></div>
+      </div>
+      <button id="compareBtn" class="button primary" disabled>⚖ Generate comparison</button>
+      <div class="compare-grid">
+        <article class="compare-output"><h3>Version A <span id="labelA">· 0.4</span></h3><div id="outputA" class="story empty">Version A will appear here.</div><div class="small-metric">Story tokens: <strong id="tokensA">—</strong></div></article>
+        <article class="compare-output"><h3>Version B <span id="labelB">· 1.2</span></h3><div id="outputB" class="story empty">Version B will appear here.</div><div class="small-metric">Story tokens: <strong id="tokensB">—</strong></div></article>
+      </div>
+    </section>
+
+    <footer><p>GPT-2 Story Studio · Educational demo · Outputs can be inaccurate or repetitive.</p><p>Model weights are downloaded from Hugging Face on first use; no hosted text-generation API is called.</p></footer>
+  </main>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
