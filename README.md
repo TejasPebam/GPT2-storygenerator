@@ -1,32 +1,32 @@
-# GPT-2 Interactive Story Generator
+# GPT-2 Story Studio — Netlify deployment package
 
-A local GPT-2 story generation app built with Streamlit and Hugging Face Transformers.
+This is a static, Netlify-compatible version of the GPT-2 Interactive Story Generator assignment.
 
-## Features
-- Opening sentence input
-- Writing style selector
-- Temperature slider
-- Local GPT-2 model loading
+## Important architecture difference
+Netlify static hosting does not run a Streamlit/Python server. This package therefore uses the browser-based Hugging Face Transformers.js runtime with the downloadable `Xenova/gpt2` model. The model weights are downloaded from Hugging Face on first use and inference runs in the visitor's browser. It does not call a hosted text-generation API.
+
+## Deploy on Netlify
+1. Extract this ZIP.
+2. In Netlify, choose **Add new site → Deploy manually** and drag the extracted folder's contents (or the folder, if the UI accepts it) into the deploy drop area.
+3. Alternatively, push the contents to GitHub and import that repository into Netlify.
+4. The publish directory is the project root (`.`); `netlify.toml` already sets this.
+5. Open the generated `*.netlify.app` URL and click **Load GPT-2 model**.
+
+## Requirements and first launch
+- A modern browser and internet access are required to load the JS runtime and model files.
+- The first load can take several minutes and downloads model weights into the browser cache.
+- The model is relatively large; hosting does not bundle model weights inside this ZIP.
+- Generation speed and memory use depend on the visitor's device and browser.
+- This package cannot guarantee error-free execution on every device/network; use browser DevTools Console if a runtime error appears.
+
+## Included features
+- Opening sentence, writing-style selector, temperature control
+- Maximum new tokens and top-k sampling controls
+- Random seed input
 - Generated story and token counts
-- Compare two temperatures
-- Top-k sampling and random seed controls
+- Two-temperature comparison
 - Download generated story as TXT
+- Responsive layout for desktop and mobile
 
-## Run on Windows
-1. Install Python 3.10 or 3.11.
-2. Extract this ZIP.
-3. Open Command Prompt in the extracted folder.
-4. Run:
-
-```bash
-python -m venv .venv
-.venv\Scripts\activate
-python -m pip install --upgrade pip
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-The app opens in your browser, usually at `http://localhost:8501`.
-
-## Important
-The first run downloads the public GPT-2 model weights from Hugging Face into the local cache, so internet access is needed once. The story generation itself runs locally; this app does not call a hosted text-generation API. GPT-2 is a relatively small older model, so some outputs may be repetitive or inconsistent.
+## Assignment note
+The original Streamlit Python app remains a separate local-run version. For a strict requirement that the Python `GPT2LMHeadModel` run on a server, Netlify static hosting alone is not the right platform; use a Python-capable host instead.
