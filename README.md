@@ -30,3 +30,6 @@ Netlify static hosting does not run a Streamlit/Python server. This package ther
 
 ## Assignment note
 The original Streamlit Python app remains a separate local-run version. For a strict requirement that the Python `GPT2LMHeadModel` run on a server, Netlify static hosting alone is not the right platform; use a Python-capable host instead.
+
+
+Model loading fix: this version uses `onnx-community/gpt2-ONNX`, a Transformers.js-compatible GPT-2 ONNX repository.

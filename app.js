@@ -71,7 +71,7 @@ async function ensureModel() {
     // All inference is performed in this browser tab; no hosted text-generation API is used.
     env.allowLocalModels = false;
     env.useBrowserCache = true;
-    generator = await pipeline("text-generation", "Xenova/gpt2", {
+    generator = await pipeline("text-generation", "onnx-community/gpt2-ONNX", {
       dtype: "q8",
       progress_callback: (progress) => {
         if (progress?.status === "progress" && progress.total) {
